@@ -51,7 +51,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/stats', statsRoutes);
 
-// ── Health check ─────────────────────────────────────────────
+// ── Health check & Root handler ──────────────────────────────
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'FindX Backend API', health: '/api/health' });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
@@ -71,8 +75,8 @@ app.use((err, req, res, next) => {
 
 // ── Start ────────────────────────────────────────────────────
 db.initialize().then(() => {
-  app.listen(PORT, () => {
-    console.log(`✅ FindX backend running on http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ FindX backend running on http://0.0.0.0:${PORT}`);
   });
 }).catch((err) => {
   console.error('❌ DB init failed:', err);

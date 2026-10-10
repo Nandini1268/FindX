@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+findx.db-wal
+findx.db-shm
+.env
+.git
