@@ -1,11 +1,22 @@
 const express = require('express');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const { dbAll, dbGet, dbRun } = require('../db');
 require('dotenv').config();
 
 const router = express.Router();
-const C_ENGINE = path.resolve(process.env.C_ENGINE_PATH || './c_engine/hash_search.exe');
+
+function getCEngineExecutable() {
+  if (process.env.C_ENGINE_PATH) return path.resolve(process.env.C_ENGINE_PATH);
+  const exePath = path.resolve(__dirname, '../../c_engine/hash_search.exe');
+  const binPath = path.resolve(__dirname, '../../c_engine/hash_search');
+  if (fs.existsSync(binPath)) return binPath;
+  if (fs.existsSync(exePath)) return exePath;
+  return process.platform === 'win32' ? exePath : binPath;
+}
+
+const C_ENGINE = getCEngineExecutable();
 
 function runCEngine(inputJson) {
   return new Promise((resolve, reject) => {
